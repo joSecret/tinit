@@ -1,0 +1,46 @@
+{#
+/**
+ * @file
+ * Theme Component components/header/default/header.
+ */
+#}
+
+{{ attach_library('tinit/bc--navbar') }}
+{{ attach_library('tinit/bc--nav') }}
+
+{% set navbar_attribute = create_attribute() %}
+{%
+  set header_classes = [
+    'navbar',
+    'flex-grow-1',
+    tt__navbar_expand,
+    tt__navbar_bg ? tt__navbar_bg,
+    tt__navbar_color,
+    tt__navbar_out ? tt__navbar_out,
+  ]
+%}
+
+{{ tt__navbar_align }}
+
+<nav{{ navbar_attribute.addclass(header_classes) }}>
+  <div class="container">
+    {{ page.branding }}
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainSidebar"
+      aria-controls="mainSidebar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainSidebar">
+      {{ page.nav_main }}
+      {{ page.header }}
+    </div>
+  </div>
+</nav>

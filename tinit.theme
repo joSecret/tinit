@@ -1,0 +1,189 @@
+<?php
+
+/**
+ * @file
+ * TiniT theme file.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_preprocess_HOOK() for menu-local-tasks templates.
+ *
+ * Use preprocess hook to set #attached to child elements
+ * because they will be processed by Twig and drupal_render will
+ * be invoked.
+ */
+function tinit_preprocess_menu_local_tasks(&$variables) {
+  foreach (Element::children($variables['primary']) as $key) {
+    $variables['primary'][$key]['#level'] = 'primary';
+  }
+  foreach (Element::children($variables['secondary']) as $key) {
+    $variables['secondary'][$key]['#level'] = 'secondary';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menu-local-task templates.
+ */
+function tinit_preprocess_menu_local_task(&$variables) {
+  if (isset($variables['is_active']) && $variables['is_active'] === TRUE) {
+    $variables['link']['#options']['attributes']['class'][] = 'active is-active';
+  }
+  else {
+    $variables['link']['#options']['attributes']['class'][] = 'nav-link';
+  }
+
+  if (isset($variables['element']['#level'])) {
+    $variables['level'] = $variables['element']['#level'];
+  }
+}
+
+/**
+ * Implements theme_preprocess_page().
+ */
+function tinit_preprocess_page(&$variables) {
+  // General settings
+  if ($htype = theme_get_setting('tt--navbar-type')) {
+    $theme_path = \Drupal::theme()->getActiveTheme()->getPath();
+    $variables['ts__header_type'] = $theme_path . '/templates/components/headers/' . $htype . '/header.html.twig';
+  }
+
+  $variables['ts__container'] = theme_get_setting('ts--container');
+
+  // Navbar settings
+  $variables['tt__navbar_position'] = theme_get_setting('tt--navbar-position');
+  $variables['tt__navbar_expand'] = theme_get_setting('tt--navbar-expand');
+  $variables['tt__navbar_color'] = theme_get_setting('tt--navbar-color');
+  $variables['tt__navbar_bg'] = theme_get_setting('tt--navbar-bg');
+  $variables['tt__navbar_out'] = theme_get_setting('tt--navbar-out');
+
+  // Footer colour theme.
+  $variables['ttvar_footer_schema'] = theme_get_setting('ttvar_footer_schema');
+  $variables['ttvar_footer_bg_schema'] = theme_get_setting('ttvar_footer_bg_schema');
+
+}
+
+/**
+ * Implements theme_preprocess_block().
+ */
+function tinit_preprocess_block(&$variables) {
+  // Navbar settings
+  $variables['tt__navbar_align'] = theme_get_setting('tt--navbar-align');
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function tinit_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  if (isset($_GET['styleguide'])) {
+    $suggestions[] = 'page__styleguide';
+  }
+}
+
+/**
+ * Implements theme_preprocess_textarea().
+ */
+function tinit_preprocess_textarea(&$variables) {
+  $variables['attributes']['class'][] = 'form-control';
+}
+
+/**
+ * Implements template_preprocess_HOOK() for input.
+ */
+function tinit_preprocess_input(&$variables) {
+  $type_html = $variables['attributes']['type'];
+  $text_types_html = [
+    'text',
+    'email',
+    'tel',
+    'number',
+    'search',
+    'password',
+    'url',
+    'month',
+    'week',
+  ];
+
+  if (in_array($type_html, $text_types_html)) {
+    $variables['attributes']['class'][] = 'form-control';
+  }
+
+  if (in_array($type_html, ['checkbox'])) {
+    $variables['attributes']['class'][] = 'form-check-input';
+  }
+}
+
+/**
+ * Implements theme_preprocess_datetime_form().
+ */
+function tinit_preprocess_datetime_form(&$variables) {
+  $variables['attributes']['class'][] = 'form-inline';
+}
+
+/**
+ * Implements theme_preprocess_html().
+ */
+function tinit_preprocess_html(&$variables) {
+  // Body colour theme.
+  $variables['ttvar_body_schema'] = theme_get_setting('ttvar_body_schema');
+  $variables['ttvar_body_bg_schema'] = theme_get_setting('ttvar_body_bg_schema');
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function tinit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $inline_form = ["search_block_form"];
+
+  if (
+    in_array($form_id, $inline_form)
+  ) {
+    $form['#form_inline'] = $form_id;
+    _tinit_attach_form_id($form, $form_id);
+  }
+}
+
+/**
+ * Attaches form id to all form elements.
+ *
+ * @param $form
+ *   The form or form element which children should have form id attached.
+ * @param $form_id
+ *   The form id attached to form elements.
+ *
+ * @return array
+ */
+function _tinit_attach_form_id(&$form, $form_id) {
+  foreach (Element::children($form) as $child) {
+    if (
+      !isset($form[$child]['#form_inline'])
+    ) {
+      $form[$child]['#form_inline'] = $form_id;
+    }
+    _tinit_attach_form_id($form[$child], $form_id);
+  }
+}
+
+/**
+ * Add suggestions by keys
+ * implements hook_theme_suggestions_alter()
+ *
+ * @param array $suggestions
+ *      Existing suggestions
+ * @param array $variables
+ *      Element variables
+ * @param string $hook
+ *      Original hook
+ */
+function tinit_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  if (
+    isset($variables['element']['#form_inline'])
+  ) {
+    $element = $variables['element'];
+    $formid = str_replace('-', '_', $element['#form_inline']);
+    $suggestions[] = $hook . '__input_group';
+    $suggestions[] = $hook . '__input_group__' . $formid;
+  }
+}

@@ -1,0 +1,9 @@
+tt--navbar-type:     default
+tt--navbar-position: 0
+ts__container:       container
+tt--navbar-expand:   navbar-expand-md
+tt--navbar-align:    my-auto
+tt__navbar_bg:       0
+tt--navbar-color:    navbar-light
+tt--navbar-out:      shadow
+
