@@ -61,7 +61,6 @@ function tinit_form_system_theme_settings_alter(&$form, FormStateInterface $form
       '#weight' => 1,
     );
 
-      // Colors settings
       $form['settings']['global'] = [
         '#type' => 'details',
         '#title' => t('Global settings'),
@@ -82,7 +81,7 @@ function tinit_form_system_theme_settings_alter(&$form, FormStateInterface $form
           '#options' => $options_container,
         ];
 
-    // Theme settings
+    // Navbar settings
     $form['navbar'] = array(
       '#type'         => 'details',
       '#title'        => t('Nav Bar'),
@@ -90,7 +89,6 @@ function tinit_form_system_theme_settings_alter(&$form, FormStateInterface $form
       '#weight' => 4,
     );
 
-      // Colors settings
       $form['navbar']['settings'] = [
         '#type' => 'details',
         '#title' => t('General settings'),
@@ -186,6 +184,27 @@ function tinit_form_system_theme_settings_alter(&$form, FormStateInterface $form
             'shadow-lg' => 'Larger shadow',
             'border-bottom' => 'Border bottom',
           ],
+        ];
+
+    $form['form'] = array(
+      '#type'         => 'details',
+      '#title'        => t('Form Settings'),
+      '#group' => 'tinit',
+      '#weight' => 1,
+    );
+
+      $form['form']['settings'] = [
+        '#type' => 'details',
+        '#title' => t('Form settings'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+        $form['form']['settings']['tt--form-input-group'] = [
+          '#type' => 'textarea',
+          '#title' => t('Form input group list'),
+          '#default_value' => theme_get_setting('tt--form-input-group'),
+          '#description'  => t('Add form id in line'),
         ];
 
   $form['body_details'] = [

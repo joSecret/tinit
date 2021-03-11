@@ -7,3 +7,5 @@ tt__navbar_bg:       0
 tt--navbar-color:    navbar-light
 tt--navbar-out:      shadow
 
+tt--form-input-group: search_block_form
+

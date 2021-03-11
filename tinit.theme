@@ -10,10 +10,6 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_preprocess_HOOK() for menu-local-tasks templates.
- *
- * Use preprocess hook to set #attached to child elements
- * because they will be processed by Twig and drupal_render will
- * be invoked.
  */
 function tinit_preprocess_menu_local_tasks(&$variables) {
   foreach (Element::children($variables['primary']) as $key) {
@@ -74,48 +70,6 @@ function tinit_preprocess_block(&$variables) {
 }
 
 /**
- * Implements hook_theme_suggestions_HOOK_alter().
- */
-function tinit_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  if (isset($_GET['styleguide'])) {
-    $suggestions[] = 'page__styleguide';
-  }
-}
-
-/**
- * Implements theme_preprocess_textarea().
- */
-function tinit_preprocess_textarea(&$variables) {
-  $variables['attributes']['class'][] = 'form-control';
-}
-
-/**
- * Implements template_preprocess_HOOK() for input.
- */
-function tinit_preprocess_input(&$variables) {
-  $type_html = $variables['attributes']['type'];
-  $text_types_html = [
-    'text',
-    'email',
-    'tel',
-    'number',
-    'search',
-    'password',
-    'url',
-    'month',
-    'week',
-  ];
-
-  if (in_array($type_html, $text_types_html)) {
-    $variables['attributes']['class'][] = 'form-control';
-  }
-
-  if (in_array($type_html, ['checkbox'])) {
-    $variables['attributes']['class'][] = 'form-check-input';
-  }
-}
-
-/**
  * Implements theme_preprocess_datetime_form().
  */
 function tinit_preprocess_datetime_form(&$variables) {
@@ -135,7 +89,7 @@ function tinit_preprocess_html(&$variables) {
  * Implements hook_form_alter().
  */
 function tinit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $inline_form = ["search_block_form"];
+  $inline_form = preg_split('/\r\n|[\r\n]/', theme_get_setting('tt--form-input-group'));
 
   if (
     in_array($form_id, $inline_form)
